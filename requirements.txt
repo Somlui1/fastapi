@@ -6,3 +6,4 @@ pybase64
 pymysql
 mysql-connector-python
 asyncpg
+sqlalchemy
