@@ -11,26 +11,18 @@ import mysql.connector
 from mysql.connector import Error
 import asyncpg
 
-
-
 app = FastAPI()
 
 
+class Item(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    tax: float | None = None
 
-class autoform(BaseModel):
-    start_date: str
-    start_time: str
-    start_hours: int
-    start_action: str
-    end_date: str
-    end_time: str
-    end_hours: int
-    end_action: str
-    duration_seconds: float
-    host: str
-    module: str
-    user: str
-    version: str
+@app.post("/testing/items/")
+async def create_item(item: Item):
+    return item
 
 DATABASE_CONFIG = {
     "user": "admin",
