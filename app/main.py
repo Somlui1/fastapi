@@ -13,15 +13,12 @@ import asyncpg
 
 app = FastAPI()
 
-
 class Supplier(BaseModel):
-    model_config = ConfigDict(strict=True)
     name: str
     contact: str
 
 # ✅ Model หลัก (object ที่มี object ซ้อนอยู่ข้างใน)
 class Item(BaseModel):
-    model_config = ConfigDict(strict=True)
     name: str
     price: float
     quantity: int
