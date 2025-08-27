@@ -1,6 +1,6 @@
 from typing import Union
 from google import genai
-from fastapi import FastAPI
+from fastapi import FastAPI ,Request
 import base64
 import requests
 import json
@@ -29,11 +29,9 @@ async def create_item(item: Item):
     total = item.price * item.quantity
     return item.model_dump()
 
-class AnyJsonModel(BaseModel):
-    model_config = ConfigDict(extra="allow")  # ยอมรับ field ใดก็ได้
 
 @app.post("/testing/anyjson/")
-async def receive_any_json(item: AnyJsonModel):
+async def receive_any_json(item: Request):
     return item.model_dump()  # แปลงเป็น dict
 
 
