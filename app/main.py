@@ -32,7 +32,8 @@ async def create_item(item: Item):
 
 @app.post("/testing/anyjson/")
 async def receive_any_json(item: Request):
-    return item.model_dump()  # แปลงเป็น dict
+    data = await item.json()  # ✅ อ่าน JSON จาก request body
+    return {"received": data}  # ✅ ส่ง dict กลับ
 
 
 
