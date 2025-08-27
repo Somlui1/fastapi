@@ -27,12 +27,16 @@ class Item(BaseModel):
 @app.post("/testing/items/")
 async def create_item(item: Item):
     total = item.price * item.quantity
-    return {
-        "name": item.name,
-        "total": total,
-        "supplier_name": item.supplier.name,
-        "supplier_contact": item.supplier.contact
-    }
+    return item.model_dump()
+
+class AnyJsonModel(BaseModel):
+    model_config = ConfigDict(extra="allow")  # ยอมรับ field ใดก็ได้
+
+@app.post("/testing/anyjson/")
+async def receive_any_json(item: AnyJsonModel):
+    return item.model_dump()  # แปลงเป็น dict
+
+
 
 DATABASE_CONFIG = {
     "user": "admin",
