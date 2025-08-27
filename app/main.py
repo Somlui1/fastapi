@@ -14,15 +14,28 @@ import asyncpg
 app = FastAPI()
 
 
-class Item(BaseModel):
+class Supplier(BaseModel):
+    model_config = ConfigDict(strict=True)
     name: str
-    description: str | None = None
+    contact: str
+
+# ✅ Model หลัก (object ที่มี object ซ้อนอยู่ข้างใน)
+class Item(BaseModel):
+    model_config = ConfigDict(strict=True)
+    name: str
     price: float
-    tax: float | None = None
+    quantity: int
+    supplier: Supplier  # 👈 ซ้อน object
 
 @app.post("/testing/items/")
 async def create_item(item: Item):
-    return item
+    total = item.price * item.quantity
+    return {
+        "name": item.name,
+        "total": total,
+        "supplier_name": item.supplier.name,
+        "supplier_contact": item.supplier.contact
+    }
 
 DATABASE_CONFIG = {
     "user": "admin",
@@ -31,6 +44,7 @@ DATABASE_CONFIG = {
     "host": "172.26.0.2",
     "port": 5432,
 }
+
 @app.get("/test-db-pg-connection")
 async def test_db_connection():
     try:
