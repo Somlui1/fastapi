@@ -4,9 +4,9 @@ from fastapi import FastAPI ,Request
 import base64
 import requests
 import json
-from fastapi import FastAPI
+from fastapi import FastAPI , Body, HTTPException
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional ,Any
 import mysql.connector
 from mysql.connector import Error
 import asyncpg
@@ -26,16 +26,11 @@ class Item(BaseModel):
 
 @app.post("/testing/items/")
 async def create_item(item: Item):
-    total = item.price * item.quantity
     return item.model_dump()
 
-
-@app.post("/testing/anyjson/")
-async def receive_any_json(item: Request):
-    data = await item.json()  # ✅ อ่าน JSON จาก request body
-    return {"received": data}  # ✅ ส่ง dict กลับ
-
-
+@app.post("/payload-dynamic/")
+async def get_payload_dynamic(payload: Any = Body(...)):
+    return {"received": payload}
 
 DATABASE_CONFIG = {
     "user": "admin",
@@ -54,9 +49,6 @@ async def test_db_connection():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database connection failed: {e}")
 
-
-
-
 def get_connection():
     return mysql.connector.connect(
         host="172.17.0.3",
@@ -65,7 +57,6 @@ def get_connection():
         password="root",
         database="glpi"
     )
-
 
 @app.get("/test-db-mysql-connection")
 def test_db_connection():
@@ -120,7 +111,6 @@ async def genai_response(question: str):
 )
     return {"question": question, "response": response.text}
 
-
 TENANTS = {
     "ah": {
         "Credential": "583db905e5af13cd_r_id:it@minAPI1WGant!",
@@ -138,7 +128,6 @@ TENANTS = {
         "Account": "WGC-3-048294f7f1ed497981c8"
     }
 }
-
 
 def fetch_devices(tenant_name):
     t = TENANTS[tenant_name]
